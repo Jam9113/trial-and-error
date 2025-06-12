@@ -238,71 +238,74 @@
       </div>
     </section>
 
-    <!-- Leave Request Section -->
-    <section class="schedule-section">
-      <h3>Leave Request</h3>
-      <form class="schedule-form" id="leaveForm">
-        <label for="employeeName">Employee Name:</label>
-        <input type="text" id="employeeName" required>
+    
+   <!-- Leave Request Section -->
+<section class="schedule-section">
+  <h3>Leave Request</h3>
+  <form class="schedule-form" id="leaveForm">
+    <label for="employeeName">Employee Name:</label>
+    <input type="text" id="employeeName" required>
 
-        <label for="leaveDepartment">Department:</label>
-        <input type="text" id="leaveDepartment" required>
+    <label for="leaveDepartment">Department:</label>
+    <input type="text" id="leaveDepartment" required>
 
-        <label for="leaveType">Leave Type:</label>
-        <select id="leaveType" required>
-          <option value="" disabled selected>Select Type</option>
-          <option>Sick Leave</option>
-          <option>Vacation Leave</option>
-          <option>Emergency Leave</option>
-          <option>Others</option>
-        </select>
+    <label for="leaveType">Leave Type:</label>
+    <select id="leaveType" required>
+      <option value="" disabled selected>Select Type</option>
+      <option>Sick Leave</option>
+      <option>Vacation Leave</option>
+      <option>Emergency Leave</option>
+      <option>Others</option>
+    </select>
 
-        <label for="leaveFrom">From:</label>
-        <input type="date" id="leaveFrom" required>
+    <label for="leaveFrom">From:</label>
+    <input type="date" id="leaveFrom" required>
 
-        <label for="leaveTo">To:</label>
-        <input type="date" id="leaveTo" required>
+    <label for="leaveTo">To:</label>
+    <input type="date" id="leaveTo" required>
 
-        <label for="leaveReason">Reason:</label>
-        <input type="text" id="leaveReason" placeholder="Enter reason" required>
+    <label for="leaveReason">Reason:</label>
+    <input type="text" id="leaveReason" placeholder="Enter reason" required>
 
-        <button type="submit">Submit Request</button>
-      </form>
+    <button type="submit">Submit Request</button>
+  </form>
 
-      <div class="schedule-list">
-        <table id="leaveTable">
-          <thead>
-            <tr>
-              <th>Employee Name</th>
-              <th>Department</th>
-              <th>Leave Type</th>
-              <th>From</th>
-              <th>To</th>
-              <th>Reason</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody id="leaveRows">
-            <tr>
-              <td colspan="5" style="text-align: center; color: #999;">
-                No leave requests yet.
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
+  <div class="schedule-list">
+    <table id="leaveTable">
+      <thead>
+        <tr>
+          <th>Employee Name</th>
+          <th>Department</th>
+          <th>Leave Type</th>
+          <th>From</th>
+          <th>To</th>
+          <th>Reason</th>
+          <th>Status</th> 
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody id="leaveRows">
+        <tr>
+          <td colspan="8" style="text-align: center; color: #999;">
+            No leave requests yet.
+          </td>
+        </tr>
+      </tbody>
+    </table>
   </div>
-  <!-- Inside <script> tag -->
+</section>
+
+  </div>
+ 
 <script>
   document.addEventListener('DOMContentLoaded', function () {
     const leaveForm = document.getElementById('leaveForm');
     const leaveRows = document.getElementById('leaveRows');
 
-    // Load leave requests from backend
+  
     async function loadLeaveRequests() {
       try {
-        const res = await fetch('http://localhost:4002/api/leave');
+        const res = await fetch('http://localhost:4002/api/leaves');
         const leaves = await res.json();
 
         leaveRows.innerHTML = '';
@@ -310,7 +313,7 @@
         if (leaves.length === 0) {
           leaveRows.innerHTML = `
             <tr>
-              <td colspan="7" style="text-align: center; color: #999;">
+              <td colspan="8" style="text-align: center; color: #999;">
                 No leave requests yet.
               </td>
             </tr>`;
@@ -323,9 +326,10 @@
             <td>${leave.employeeName}</td>
             <td>${leave.department}</td>
             <td>${leave.leaveType}</td>
-            <td>${leave.startDate}</td>
-            <td>${leave.endDate}</td>
+            <td>${new Date(leave.startDate).toLocaleDateString()}</td>
+            <td>${new Date(leave.endDate).toLocaleDateString()}</td>
             <td>${leave.reason}</td>
+            <td>${leave.status || 'Pending'}</td>
             <td><button class="delete-btn" onclick="alert('Delete function not implemented yet')">Delete</button></td>
           `;
           leaveRows.appendChild(row);
@@ -350,7 +354,7 @@
         };
 
         try {
-          const res = await fetch('http://localhost:4002/api/leave', {
+          const res = await fetch('http://localhost:4002/api/leaves/submit', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(leaveData)
