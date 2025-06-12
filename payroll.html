@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Payroll System</title>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"/>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins"/>
+  <link rel="stylesheet" href="css/main.css">
+
+  <script src="js/payroll.js"></script>
+  <style>
+    h2 {
+      text-align: center;
+      font-weight: bold;
+      margin: 20px 0;
+    }
+
+    label {
+      display: inline-block;
+      width: 180px;
+      margin-bottom: 10px;
+    }
+
+    input[type="number"],
+    input[type="text"],
+    input[type="date"] {
+      width: 150px;
+      padding: 5px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+    }
+
+    .row {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+      align-items: center;
+    }
+
+    button {
+      padding: 10px 20px;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+      margin: 10px 5px 0 5px;
+      border-radius: 5px;
+      transition: background-color 0.3s;
+      color: white;
+    }
+
+    #compute {
+      background-color: #4ade80;
+    }
+
+    #clear {
+      background-color: #f87171;
+    }
+
+    #exportCsv {
+      background-color: #60a5fa;
+    }
+
+    #downloadPdf,
+    #print {
+      background-color: #fbbf24;
+      color: #222;
+    }
+
+    .center-button {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+
+    .centered-logo {
+      display: block;
+      margin: 0 auto 20px auto;
+      max-width: 100px;
+      height: auto;
+    }
+
+    button:hover {
+      filter: brightness(1.1);
+    }
+  </style>
+</head>
+
+<body>
+  <div class="sidebar">
+    <img src="./img/pikifi_logo.png" alt="Logo" class="img" />
+    <div class="logo">PIKIFI</div>
+    <ul class="main">
+      <li><a href="/"><i class="fas fa-tachometer-alt"></i> <span>Dashboard</span></a></li>
+      <li class="active"><a href="payroll.html"><i class="fas fa-money-bill-wave"></i> <span>Payroll</span></a></li>
+      <li><a href="payroll-history.html"><i class="fas fa-history"></i> <span>Payroll History</span></a></li>
+      <li><a href="employee.html"><i class="fas fa-user-tie"></i> <span>Employee</span></a></li>
+      <li><a href="bonus.html"><i class="fas fa-calendar-alt"></i> <span>13th Month Pay</span></a></li>
+    </ul>
+  </div>
+
+  <div class="main-content">
+    <div class="container">
+      <h2><b>Payroll System</b></h2>
+  
+      <div class="row">
+        <label for="payday">Payday:</label>
+        <input type="date" id="payday" />
+      </div>
+  
+      <div class="row">
+        <label for="employeeName">Employee Name:</label>
+        <input type="text" id="employeeName" />
+      </div>
+  
+      <div class="row">
+        <label for="department">Department:</label>
+        <input type="text" id="department" />
+      </div>
+  
+      <div class="row">
+        <label for="ratePerHour">Rate / Hour:</label>
+        <input type="number" id="ratePerHour" min="0" step="0.01" />
+      </div>
+  
+      <div class="row">
+        <label for="hoursPerDay">Hours / Day:</label>
+        <input type="number" id="hoursPerDay" min="0" step="0.01" />
+      </div>
+  
+      <div class="row">
+        <label for="daysWorked">Number of Days Worked:</label>
+        <input type="number" id="daysWorked" min="0" step="1" />
+      </div>
+  
+      <div class="row">
+        <label for="grossSalary">Gross Salary:</label>
+        <input type="number" id="grossSalary" readonly />
+      </div>
+  
+      <h2><b>Deduction Of Salary</b></h2>
+  
+      <div class="row">
+        <label for="tax">Tax:</label>
+        <input type="number" id="tax" readonly />
+      </div>
+  
+      <div class="row">
+        <label for="philHealth">PhilHealth:</label>
+        <input type="number" id="philHealth" readonly />
+      </div>
+  
+      <div class="row">
+        <label for="sss">SSS:</label>
+        <input type="number" id="sss" readonly />
+      </div>
+  
+      <div class="row">
+        <label for="totalDeduction">Total Deduction:</label>
+        <input type="number" id="totalDeduction" readonly />
+      </div>
+  
+      <div class="row">
+        <label for="netSalary">Net Salary:</label>
+        <input type="number" id="netSalary" readonly />
+      </div>
+  
+      <div class="center-button">
+        <button id="compute">COMPUTE</button>
+        <button id="exportCsv">EXPORT CSV</button>
+        <button id="downloadPdf">DOWNLOAD PDF</button>
+        <button id="clear">CLEAR</button>
+        <button id="print">PRINT</button>
+      </div>
+    </div>  
+  </div>
+
+  <!-- jsPDF library for PDF export -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</body>
+
+</html>

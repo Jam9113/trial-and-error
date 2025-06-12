@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Payroll History</title>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"/>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins"/>
+  <link rel="stylesheet" href="css/main.css">
+
+  <style>
+    h2 {
+      text-align: center;
+      font-weight: bold;
+      margin: 20px 0;
+    }
+
+    .filter-section {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .filter-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    input[type="date"],
+    select {
+      padding: 5px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      padding: 8px 15px;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+      border-radius: 5px;
+      transition: background-color 0.3s;
+      color: white;
+    }
+
+    .filter-btn {
+      background-color: #4ade80;
+    }
+
+    .reset-btn {
+      background-color: #f87171;
+    }
+
+    .export-btn {
+      background-color: #60a5fa;
+    }
+
+    button:hover {
+      filter: brightness(1.1);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    th, td {
+      padding: 12px 15px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+
+    th {
+      background-color: #f2f2f2;
+      font-weight: bold;
+    }
+
+    tr:hover {
+      background-color: #f5f5f5;
+    }
+
+    .payroll-details {
+      display: none;
+      background-color: #f9f9f9;
+      padding: 15px;
+      border-radius: 5px;
+      margin-top: 10px;
+    }
+
+    .view-details-btn {
+      background-color: #60a5fa;
+      padding: 5px 10px;
+      font-size: 12px;
+    }
+
+    .pagination {
+      display: flex;
+      justify-content: center;
+      margin-top: 20px;
+      gap: 5px;
+    }
+
+    .pagination button {
+      background-color: #60a5fa;
+      padding: 5px 10px;
+    }
+
+    .pagination button.active {
+      background-color: #3b82f6;
+    }
+
+    .pagination button:disabled {
+      background-color: #cbd5e1;
+      cursor: not-allowed;
+    }
+
+    .no-data {
+      text-align: center;
+      padding: 20px;
+      font-style: italic;
+      color: #666;
+    }
+
+    .summary-section {
+      margin-top: 30px;
+      background-color: #f0f9ff;
+      padding: 15px;
+      border-radius: 5px;
+    }
+
+    .summary-title {
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 15px;
+    }
+
+    .summary-item {
+      background-color: white;
+      padding: 10px;
+      border-radius: 5px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    .summary-label {
+      font-size: 12px;
+      color: #666;
+    }
+
+    .summary-value {
+      font-weight: bold;
+      font-size: 18px;
+      color: #333;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="sidebar">
+    <img src="./img/pikifi_logo.png" alt="Logo" class="img" />
+    <div class="logo">PIKIFI</div>
+    <ul class="main">
+      <li><a href="/"><i class="fas fa-tachometer-alt"></i> <span>Dashboard</span></a></li>
+      <li><a href="payroll.html"><i class="fas fa-money-bill-wave"></i> <span>Payroll</span></a></li>
+      <li class="active"><a href="payroll-history.html"><i class="fas fa-history"></i> <span>Payroll History</span></a></li>
+      <li><a href="employee.html"><i class="fas fa-user-tie"></i> <span>Employee</span></a></li>
+      <li><a href="bonus.html"><i class="fas fa-calendar-alt"></i> <span>13th Month Pay</span></a></li>
+    </ul>
+  </div>
+
+  <div class="main-content">
+    <div class="container-fluid">
+      <h2><b>Payroll History</b></h2>
+      
+      <div class="filter-section">
+        <div class="filter-group">
+          <label for="startDate">From:</label>
+          <input type="date" id="startDate">
+          <label for="endDate">To:</label>
+          <input type="date" id="endDate">
+        </div>
+        
+        <div class="filter-group">
+          <label for="departmentFilter">Department:</label>
+          <select id="departmentFilter">
+            <option value="">All Departments</option>
+          </select>
+          
+          <label for="employeeFilter">Employee:</label>
+          <select id="employeeFilter">
+            <option value="">All Employees</option>
+          </select>
+        </div>
+        
+        <div class="filter-group">
+          <button id="filterBtn" class="filter-btn"><i class="fas fa-filter"></i> Filter</button>
+          <button id="resetBtn" class="reset-btn"><i class="fas fa-undo"></i> Reset</button>
+          <button id="exportBtn" class="export-btn"><i class="fas fa-file-export"></i> Export</button>
+        </div>
+      </div>
+      
+      <div id="payrollTable">
+        <table>
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Employee</th>
+              <th>Department</th>
+              <th>Gross Salary</th>
+              <th>Deductions</th>
+              <th>Net Salary</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="payrollTableBody">
+            <!-- Payroll data will be populated here -->
+          </tbody>
+        </table>
+        <div id="noData" class="no-data" style="display: none;">No payroll records found.</div>
+      </div>
+      
+      <div class="pagination" id="pagination">
+        <!-- Pagination buttons will be added here -->
+      </div>
+      
+      <div class="summary-section">
+        <div class="summary-title">Summary</div>
+        <div class="summary-grid">
+          <div class="summary-item">
+            <div class="summary-label">Total Records</div>
+            <div class="summary-value" id="totalRecords">0</div>
+          </div>
+          <div class="summary-item">
+            <div class="summary-label">Total Gross Salary</div>
+            <div class="summary-value" id="totalGross">₱0.00</div>
+          </div>
+          <div class="summary-item">
+            <div class="summary-label">Total Deductions</div>
+            <div class="summary-value" id="totalDeductions">₱0.00</div>
+          </div>
+          <div class="summary-item">
+            <div class="summary-label">Total Net Salary</div>
+            <div class="summary-value" id="totalNet">₱0.00</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Initialize date filters with current month
+      const today = new Date();
+      const firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
+      const lastDay = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+      
+      document.getElementById('startDate').valueAsDate = firstDay;
+      document.getElementById('endDate').valueAsDate = lastDay;
+      
+      // Pagination variables
+      let currentPage = 1;
+      const recordsPerPage = 10;
+      let allPayrolls = [];
+      let filteredPayrolls = [];
+      
+      // Load departments and employees for filters
+      loadDepartmentsAndEmployees();
+      
+      // Initial data load
+      loadPayrollData();
+      
+      // Event listeners
+      document.getElementById('filterBtn').addEventListener('click', applyFilters);
+      document.getElementById('resetBtn').addEventListener('click', resetFilters);
+      document.getElementById('exportBtn').addEventListener('click', exportPayrollData);
+      
+      // Function to load departments and employees
+      async function loadDepartmentsAndEmployees() {
+        try {
+          // Load employees
+          const employeeResponse = await fetch('https://employee-service-gec9.onrender.com/api/employees');
+          if (employeeResponse.ok) {
+            const employees = await employeeResponse.json();
+            
+            // Populate employee filter
+            const employeeFilter = document.getElementById('employeeFilter');
+            const departmentSet = new Set();
+            
+            employees.forEach(employee => {
+              // Add to employee dropdown
+              const option = document.createElement('option');
+              option.value = employee._id;
+              option.textContent = employee.name;
+              employeeFilter.appendChild(option);
+              
+              // Collect unique departments
+              if (employee.department) {
+                departmentSet.add(employee.department);
+              }
+            });
+            
+            // Populate department filter
+            const departmentFilter = document.getElementById('departmentFilter');
+            departmentSet.forEach(department => {
+              const option = document.createElement('option');
+              option.value = department;
+              option.textContent = department;
+              departmentFilter.appendChild(option);
+            });
+          }
+        } catch (error) {
+          console.error('Error loading filter data:', error);
+        }
+      }
+      
+      // Function to load payroll data
+      async function loadPayrollData() {
+        try {
+          const response = await fetch('https://payroll-service-bnci.onrender.com/api/payrolls?includeEmployeeDetails=true');
+          if (response.ok) {
+            allPayrolls = await response.json();
+            applyFilters(); // Apply any filters and display data
+          } else {
+            showNoData();
+          }
+        } catch (error) {
+          console.error('Error loading payroll data:', error);
+          showNoData();
+        }
+      }
+      
+      // Function to apply filters
+      function applyFilters() {
+        const startDate = document.getElementById('startDate').value;
+        const endDate = document.getElementById('endDate').value;
+        const department = document.getElementById('departmentFilter').value;
+        const employeeId = document.getElementById('employeeFilter').value;
+        
+        // Filter payrolls based on criteria
+        filteredPayrolls = allPayrolls.filter(payroll => {
+          // Date filter
+          const payrollDate = new Date(payroll.payday).toISOString().split('T')[0];
+          const dateMatch = (!startDate || payrollDate >= startDate) && 
+                           (!endDate || payrollDate <= endDate);
+          
+          // Department filter
+          const departmentMatch = !department || payroll.department === department;
+          
+          // Employee filter
+          const employeeMatch = !employeeId || payroll.employeeId === employeeId;
+          
+          return dateMatch && departmentMatch && employeeMatch;
+        });
+        
+        // Reset to first page and display
+        currentPage = 1;
+        displayPayrollData();
+        updateSummary();
+      }
+      
+      // Function to reset filters
+      function resetFilters() {
+        // Reset date filters to current month
+        document.getElementById('startDate').valueAsDate = firstDay;
+        document.getElementById('endDate').valueAsDate = lastDay;
+        
+        // Reset dropdowns
+        document.getElementById('departmentFilter').value = '';
+        document.getElementById('employeeFilter').value = '';
+        
+        // Show all data
+        filteredPayrolls = [...allPayrolls];
+        currentPage = 1;
+        displayPayrollData();
+        updateSummary();
+      }
+      
+      // Function to display payroll data with pagination
+      function displayPayrollData() {
+        const tableBody = document.getElementById('payrollTableBody');
+        tableBody.innerHTML = '';
+        
+        if (filteredPayrolls.length === 0) {
+          showNoData();
+          return;
+        }
+        
+        document.getElementById('noData').style.display = 'none';
+        document.getElementById('payrollTable').style.display = 'block';
+        
+        // Calculate pagination
+        const startIndex = (currentPage - 1) * recordsPerPage;
+        const endIndex = Math.min(startIndex + recordsPerPage, filteredPayrolls.length);
+        const recordsToShow = filteredPayrolls.slice(startIndex, endIndex);
+        
+        // Create table rows
+        recordsToShow.forEach(payroll => {
+          const row = document.createElement('tr');
+          
+          // Format date
+          const payrollDate = new Date(payroll.payday).toLocaleDateString();
+          
+          // Create cells
+          row.innerHTML = `
+            <td>${payrollDate}</td>
+            <td>${payroll.employeeName}</td>
+            <td>${payroll.department}</td>
+            <td>₱${Number(payroll.GrossSalary).toFixed(2)}</td>
+            <td>₱${Number(payroll.TotalDeductions).toFixed(2)}</td>
+            <td>₱${Number(payroll.NetSalary).toFixed(2)}</td>
+            <td>
+              <button class="view-details-btn" data-id="${payroll._id}">
+                <i class="fas fa-eye"></i> Details
+              </button>
+            </td>
+          `;
+          
+          tableBody.appendChild(row);
+          
+          // Add details row
+          const detailsRow = document.createElement('tr');
+          detailsRow.className = 'details-row';
+          
+          const detailsCell = document.createElement('td');
+          detailsCell.colSpan = 7;
+          
+          let employeeDetails = '';
+          if (payroll.employeeDetails) {
+            employeeDetails = `
+              <div>
+                <strong>Position:</strong> ${payroll.employeeDetails.position || 'N/A'}<br>
+                <strong>Monthly Salary:</strong> ₱${payroll.employeeDetails.monthlySalary?.toFixed(2) || 'N/A'}<br>
+                <strong>Work Hours:</strong> ${payroll.employeeDetails.timeIn || 'N/A'} - ${payroll.employeeDetails.timeOut || 'N/A'}
+              </div>
+            `;
+          }
+          
+          detailsCell.innerHTML = `
+            <div class="payroll-details" id="details-${payroll._id}">
+              <div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 20px;">
+                <div>
+                  <h4>Payroll Details</h4>
+                  <p>
+                    <strong>Rate per Hour:</strong> ₱${payroll.RateperHour}<br>
+                    <strong>Hours per Day:</strong> ${payroll.HoursperDay}<br>
+                    <strong>Days Worked:</strong> ${payroll.NumbersofDaysWorked}<br>
+                    <strong>Gross Salary:</strong> ₱${payroll.GrossSalary}
+                  </p>
+                </div>
+                <div>
+                  <h4>Deductions</h4>
+                  <p>
+                    <strong>Tax (15%):</strong> ₱${payroll.Tax}<br>
+                    <strong>PhilHealth (5%):</strong> ₱${payroll.Philhealth}<br>
+                    <strong>SSS (11%):</strong> ₱${payroll.SSS}<br>
+                    <strong>Total Deductions:</strong> ₱${payroll.TotalDeductions}
+                  </p>
+                </div>
+                <div>
+                  <h4>Employee Information</h4>
+                  ${employeeDetails}
+                </div>
+              </div>
+            </div>
+          `;
+          
+          detailsRow.appendChild(detailsCell);
+          tableBody.appendChild(detailsRow);
+        });
+        
+        // Add event listeners to detail buttons
+        document.querySelectorAll('.view-details-btn').forEach(button => {
+          button.addEventListener('click', () => {
+            const detailsId = `details-${button.getAttribute('data-id')}`;
+            const detailsElement = document.getElementById(detailsId);
+            
+            if (detailsElement.style.display === 'block') {
+              detailsElement.style.display = 'none';
+              button.innerHTML = '<i class="fas fa-eye"></i> Details';
+            } else {
+              // Hide all other details first
+              document.querySelectorAll('.payroll-details').forEach(el => {
+                el.style.display = 'none';
+              });
+              document.querySelectorAll('.view-details-btn').forEach(btn => {
+                btn.innerHTML = '<i class="fas fa-eye"></i> Details';
+              });
+              
+              // Show this detail
+              detailsElement.style.display = 'block';
+              button.innerHTML = '<i class="fas fa-eye-slash"></i> Hide';
+            }
+          });
+        });
+        
+        // Update pagination
+        updatePagination();
+      }
+      
+      // Function to update pagination controls
+      function updatePagination() {
+        const totalPages = Math.ceil(filteredPayrolls.length / recordsPerPage);
+        const paginationElement = document.getElementById('pagination');
+        paginationElement.innerHTML = '';
+        
+        // Previous button
+        const prevButton = document.createElement('button');
+        prevButton.innerHTML = '&laquo; Prev';
+        prevButton.disabled = currentPage === 1;
+        prevButton.addEventListener('click', () => {
+          if (currentPage > 1) {
+            currentPage--;
+            displayPayrollData();
+          }
+        });
+        paginationElement.appendChild(prevButton);
+        
+        // Page numbers
+        const maxButtons = 5;
+        const startPage = Math.max(1, currentPage - Math.floor(maxButtons / 2));
+        const endPage = Math.min(totalPages, startPage + maxButtons - 1);
+        
+        for (let i = startPage; i <= endPage; i++) {
+          const pageButton = document.createElement('button');
+          pageButton.textContent = i;
+          pageButton.className = i === currentPage ? 'active' : '';
+          pageButton.addEventListener('click', () => {
+            currentPage = i;
+            displayPayrollData();
+          });
+          paginationElement.appendChild(pageButton);
+        }
+        
+        // Next button
+        const nextButton = document.createElement('button');
+        nextButton.innerHTML = 'Next &raquo;';
+        nextButton.disabled = currentPage === totalPages || totalPages === 0;
+        nextButton.addEventListener('click', () => {
+          if (currentPage < totalPages) {
+            currentPage++;
+            displayPayrollData();
+          }
+        });
+        paginationElement.appendChild(nextButton);
+      }
+      
+      // Function to update summary statistics
+      function updateSummary() {
+        let totalGross = 0;
+        let totalDeductions = 0;
+        let totalNet = 0;
+        
+        filteredPayrolls.forEach(payroll => {
+          totalGross += Number(payroll.GrossSalary);
+          totalDeductions += Number(payroll.TotalDeductions);
+          totalNet += Number(payroll.NetSalary);
+        });
+        
+        document.getElementById('totalRecords').textContent = filteredPayrolls.length;
+        document.getElementById('totalGross').textContent = `₱${totalGross.toFixed(2)}`;
+        document.getElementById('totalDeductions').textContent = `₱${totalDeductions.toFixed(2)}`;
+        document.getElementById('totalNet').textContent = `₱${totalNet.toFixed(2)}`;
+      }
+      
+      // Function to show "no data" message
+      function showNoData() {
+        document.getElementById('payrollTable').style.display = 'block';
+        document.getElementById('noData').style.display = 'block';
+        document.getElementById('payrollTableBody').innerHTML = '';
+        document.getElementById('pagination').innerHTML = '';
+        
+        // Reset summary
+        document.getElementById('totalRecords').textContent = '0';
+        document.getElementById('totalGross').textContent = '₱0.00';
+        document.getElementById('totalDeductions').textContent = '₱0.00';
+        document.getElementById('totalNet').textContent = '₱0.00';
+      }
+      
+      // Function to export payroll data
+      function exportPayrollData() {
+        if (filteredPayrolls.length === 0) {
+          alert('No data to export.');
+          return;
+        }
+        
+        // Create CSV content
+        const headers = ['Date', 'Employee', 'Department', 'Rate/Hour', 'Hours/Day', 'Days Worked', 
+                        'Gross Salary', 'Tax', 'PhilHealth', 'SSS', 'Total Deductions', 'Net Salary'];
+        
+        let csvContent = headers.join(',') + '\n';
+        
+        filteredPayrolls.forEach(payroll => {
+          const date = new Date(payroll.payday).toLocaleDateString();
+          const row = [
+            `"${date}"`,
+            `"${payroll.employeeName}"`,
+            `"${payroll.department}"`,
+            payroll.RateperHour,
+            payroll.HoursperDay,
+            payroll.NumbersofDaysWorked,
+            payroll.GrossSalary,
+            payroll.Tax,
+            payroll.Philhealth,
+            payroll.SSS,
+            payroll.TotalDeductions,
+            payroll.NetSalary
+          ];
+          
+          csvContent += row.join(',') + '\n';
+        });
+        
+        // Create download link
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', `payroll_history_${new Date().toISOString().split('T')[0]}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
+    });
+  </script>
+</body>
+
+</html>

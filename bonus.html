@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>13th Month Pay Calculator</title>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"/>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins"/>
+  <link rel="stylesheet" href="css/main.css">
+
+  <script src="js/bonus.js"></script>
+  <style>
+    h2 {
+      text-align: center;
+      margin-bottom: 30px;
+      font-weight: 700;
+    }
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+    input[type="text"], input[type="number"], select {
+      width: 100%;
+      padding: 10px;
+      border-radius: 6px;
+      border: none;
+      margin-bottom: 15px;
+      font-size: 16px;
+    }
+    select {
+      background-color: #5773b9;
+      color: white;
+      cursor: pointer;
+    }
+    button {
+      background-color: #6AB04C;
+      color: white;
+      border: none;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      width: 100%;
+      margin-top: 8px;
+      transition: background-color 0.3s ease;
+    }
+    button:disabled {
+      background-color: #95c47f;
+      cursor: not-allowed;
+    }
+    button:hover:not(:disabled) {
+      background-color: #4A852D;
+    }
+    .export-btn {
+      background-color: #FF5722;
+      margin-top: 12px;
+    }
+    .export-btn:hover:not(:disabled) {
+      background-color: #cc4600;
+    }
+     .centered-logo {
+      display: block;
+      margin: 0 auto 20px auto;
+      max-width: 100px;
+      height: auto;
+    }
+    #result {
+      margin-top: 20px;
+      font-weight: 700;
+      text-align: center;
+      font-size: 18px;
+      min-height: 24px;
+    }
+    #message {
+      margin-top: 10px;
+      text-align: center;
+      font-weight: 600;
+      min-height: 20px;
+    }
+    table {
+      margin-top: 30px;
+      width: 100%;
+      border-collapse: collapse;
+      background: #2E3B55;
+      color: white;
+      display: none;
+    }
+    th, td {
+      padding: 10px;
+      border: 1px solid #4A90E2;
+      text-align: center;
+    }
+    th {
+      background-color: #1E2A43;
+    }
+    .entry-no-history {
+      font-style: italic;
+      text-align: center;
+      margin-top: 15px;
+      color: #ccc;
+    }
+  </style>
+  <!-- jsPDF UMD -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+  <div class="sidebar">
+    <img src="./img/pikifi_logo.png" alt="Logo" class="img"/>
+    <div class="logo">PIKIFI</div>
+    <ul class="main">
+      <li><a href="/"><i class="fas fa-tachometer-alt"></i> <span>Dashboard</span></a></li>
+      <li><a href="payroll.html"><i class="fas fa-money-bill-wave"></i> <span>Payroll</span></a></li>
+      <li><a href="payroll-history.html"><i class="fas fa-history"></i> <span>Payroll History</span></a></li>
+      <li><a href="employee.html"><i class="fas fa-user-tie"></i> <span>Employee</span></a></li>
+      <li class="active"><a href="bonus.html"><i class="fas fa-calendar-alt"></i> <span>13th Month Pay</span></a></li>
+    </ul>
+  </div>
+
+  <div class="main-content">
+    <div class="container">
+      <h2>13th Month Pay Calculator</h2>
+  
+      <label for="newName">New Employee Name</label>
+      <input type="text" id="newName" placeholder="Enter employee name" maxlength="50" />
+  
+      <label for="newSalary">Monthly Salary (₱)</label>
+      <input type="number" id="newSalary" placeholder="Enter monthly salary" min="0" step="0.01" />
+  
+      <button id="addEmployeeBtn">Add New Employee</button>
+  
+      <hr style="margin: 25px 0; border-color: #5773b9;" />
+  
+      <label for="employeeSelect">Select Employee</label>
+      <select id="employeeSelect">
+        <option value="">-- Select --</option>
+      </select>
+  
+      <button id="calculateBtn">Calculate</button>
+      <button id="downloadPdfBtn" class="export-btn">Download PDF</button>
+  
+      <div id="result"></div>
+      <div id="message"></div>
+      
+      <div id="calculationInfo" style="margin-top: 20px; background-color: #f0f9ff; padding: 15px; border-radius: 5px; display: none;">
+        <h3 style="margin-bottom: 10px;">Calculation Details</h3>
+        <div id="calculationMethod"></div>
+        <div id="calculationBreakdown" style="margin-top: 10px;"></div>
+      </div>
+  
+      <table id="historyTable">
+        <thead>
+          <tr>
+            <th>Employee</th>
+            <th>13th Month Pay (₱)</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+  
+      <div id="noHistoryMsg" class="entry-no-history">Select an employee to see history</div>
+    </div>
+  </div>
+</body>
+</html>

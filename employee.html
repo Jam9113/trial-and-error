@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PIKIFI Employee Management System</title>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"/>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins"/>
+  <link rel="stylesheet" href="css/main.css">
+
+  <script src="js/employee.js"></script>
+  <style>
+    h2 {
+      text-align: center;
+      margin-bottom: 25px;
+      font-weight: 700;
+    }
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 600;
+    }
+    input[type="text"], input[type="number"], input[type="time"] {
+      width: 100%;
+      padding: 8px 10px;
+      border-radius: 6px;
+      border: none;
+      margin-bottom: 15px;
+      font-size: 16px;
+    }
+    button {
+      background-color: #6AB04C;
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      width: 100%;
+      margin-bottom: 10px;
+    }
+    button:hover {
+      background-color: #4A852D;
+    }
+    .export-btn {
+      background-color: blue;
+      margin-top: 10px;
+    }
+    table {
+      margin-top: 30px;
+      width: 100%;
+      border-collapse: collapse;
+      background: #2E3B55;
+      color: white;
+    }
+    th, td {
+      padding: 10px;
+      border: 1px solid #4A90E2;
+      text-align: center;
+    }
+    th {
+      background-color: #1E2A43;
+    }
+    .action-btn {
+      margin: 0 5px;
+      padding: 5px 10px;
+      font-size: 14px;
+      border-radius: 5px;
+      border: none;
+      cursor: pointer;
+      color: white;
+    }
+     .centered-logo {
+      display: block;
+      margin: 0 auto 20px auto;
+      max-width: 100px;
+      height: auto;
+    }
+    .edit-btn {
+      background-color: #FFA500;
+    }
+    .edit-btn:hover {
+      background-color: #cc8400;
+    }
+    .delete-btn {
+      background-color: #E74C3C;
+    }
+    .delete-btn:hover {
+      background-color: #b32d20;
+    }
+  </style>
+
+  <!-- jsPDF and jsPDF-AutoTable -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+</head>
+<body>
+  <div class="sidebar">
+    <img src="./img/pikifi_logo.png" alt="Logo" class="img"/>
+    <div class="logo">PIKIFI</div>
+    <ul class="main">
+      <li><a href="/"><i class="fas fa-tachometer-alt"></i> <span>Dashboard</span></a></li>
+      <li><a href="payroll.html"><i class="fas fa-money-bill-wave"></i> <span>Payroll</span></a></li>
+      <li><a href="payroll-history.html"><i class="fas fa-history"></i> <span>Payroll History</span></a></li>
+      <li class="active"><a href="employee.html"><i class="fas fa-user-tie"></i> <span>Employee</span></a></li>
+      <li><a href="bonus.html"><i class="fas fa-calendar-alt"></i> <span>13th Month Pay</span></a></li>
+    </ul>
+  </div>
+
+  <div class="main-content">
+    <div class="container">
+      <h2>Employee Management System</h2>
+  
+      <label for="name">Employee Name:</label>
+      <input type="text" id="name" />
+  
+      <label for="position">Position:</label>
+      <input type="text" id="position" />
+  
+      <label for="department">Department:</label>
+      <input type="text" id="department" />
+  
+      <label for="monthlySalary">Monthly Salary (PHP):</label>
+      <input type="number" id="monthlySalary" min="0" />
+  
+      <label for="timeIn">Time In:</label>
+      <input type="time" id="timeIn" />
+  
+      <label for="timeOut">Time Out:</label>
+      <input type="time" id="timeOut" />
+  
+      <button id="saveBtn">Save Employee Data</button>
+      <button id="exportPdfBtn" class="export-btn">Export to PDF</button>
+  
+      <table id="employeeTable" style="display:none;">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Position</th>
+            <th>Department</th>
+            <th>Monthly Salary (PHP)</th>
+            <th>Time In</th>
+            <th>Time Out</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+</body>
+</html>
